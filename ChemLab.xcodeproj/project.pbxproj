@@ -1,0 +1,567 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		81C4669F20634405007817BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C4669E20634405007817BB /* AppDelegate.swift */; };
+		81C466A120634405007817BB /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 81C466A020634405007817BB /* art.scnassets */; };
+		81C466A320634405007817BB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C466A220634405007817BB /* ViewController.swift */; };
+		81C466A620634405007817BB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81C466A420634405007817BB /* Main.storyboard */; };
+		81C466A820634405007817BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 81C466A720634405007817BB /* Assets.xcassets */; };
+		81C466AB20634405007817BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81C466A920634405007817BB /* LaunchScreen.storyboard */; };
+		81C466B620634405007817BB /* ChemLabTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C466B520634405007817BB /* ChemLabTests.swift */; };
+		81C466C120634406007817BB /* ChemLabUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C466C020634406007817BB /* ChemLabUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		81C466B220634405007817BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 81C4669320634405007817BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81C4669A20634405007817BB;
+			remoteInfo = ChemLab;
+		};
+		81C466BD20634406007817BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 81C4669320634405007817BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81C4669A20634405007817BB;
+			remoteInfo = ChemLab;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		81C4669B20634405007817BB /* ChemLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChemLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81C4669E20634405007817BB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		81C466A020634405007817BB /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		81C466A220634405007817BB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		81C466A520634405007817BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		81C466A720634405007817BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		81C466AA20634405007817BB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81C466AC20634405007817BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81C466B120634405007817BB /* ChemLabTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChemLabTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		81C466B520634405007817BB /* ChemLabTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChemLabTests.swift; sourceTree = "<group>"; };
+		81C466B720634405007817BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81C466BC20634406007817BB /* ChemLabUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChemLabUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		81C466C020634406007817BB /* ChemLabUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChemLabUITests.swift; sourceTree = "<group>"; };
+		81C466C220634406007817BB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		81C4669820634405007817BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466AE20634405007817BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466B920634406007817BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		81C4669220634405007817BB = {
+			isa = PBXGroup;
+			children = (
+				81C4669D20634405007817BB /* ChemLab */,
+				81C466B420634405007817BB /* ChemLabTests */,
+				81C466BF20634406007817BB /* ChemLabUITests */,
+				81C4669C20634405007817BB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		81C4669C20634405007817BB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				81C4669B20634405007817BB /* ChemLab.app */,
+				81C466B120634405007817BB /* ChemLabTests.xctest */,
+				81C466BC20634406007817BB /* ChemLabUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		81C4669D20634405007817BB /* ChemLab */ = {
+			isa = PBXGroup;
+			children = (
+				81C4669E20634405007817BB /* AppDelegate.swift */,
+				81C466A020634405007817BB /* art.scnassets */,
+				81C466A220634405007817BB /* ViewController.swift */,
+				81C466A420634405007817BB /* Main.storyboard */,
+				81C466A720634405007817BB /* Assets.xcassets */,
+				81C466A920634405007817BB /* LaunchScreen.storyboard */,
+				81C466AC20634405007817BB /* Info.plist */,
+			);
+			path = ChemLab;
+			sourceTree = "<group>";
+		};
+		81C466B420634405007817BB /* ChemLabTests */ = {
+			isa = PBXGroup;
+			children = (
+				81C466B520634405007817BB /* ChemLabTests.swift */,
+				81C466B720634405007817BB /* Info.plist */,
+			);
+			path = ChemLabTests;
+			sourceTree = "<group>";
+		};
+		81C466BF20634406007817BB /* ChemLabUITests */ = {
+			isa = PBXGroup;
+			children = (
+				81C466C020634406007817BB /* ChemLabUITests.swift */,
+				81C466C220634406007817BB /* Info.plist */,
+			);
+			path = ChemLabUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		81C4669A20634405007817BB /* ChemLab */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81C466C520634406007817BB /* Build configuration list for PBXNativeTarget "ChemLab" */;
+			buildPhases = (
+				81C4669720634405007817BB /* Sources */,
+				81C4669820634405007817BB /* Frameworks */,
+				81C4669920634405007817BB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ChemLab;
+			productName = ChemLab;
+			productReference = 81C4669B20634405007817BB /* ChemLab.app */;
+			productType = "com.apple.product-type.application";
+		};
+		81C466B020634405007817BB /* ChemLabTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81C466C820634406007817BB /* Build configuration list for PBXNativeTarget "ChemLabTests" */;
+			buildPhases = (
+				81C466AD20634405007817BB /* Sources */,
+				81C466AE20634405007817BB /* Frameworks */,
+				81C466AF20634405007817BB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				81C466B320634405007817BB /* PBXTargetDependency */,
+			);
+			name = ChemLabTests;
+			productName = ChemLabTests;
+			productReference = 81C466B120634405007817BB /* ChemLabTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		81C466BB20634406007817BB /* ChemLabUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81C466CB20634406007817BB /* Build configuration list for PBXNativeTarget "ChemLabUITests" */;
+			buildPhases = (
+				81C466B820634406007817BB /* Sources */,
+				81C466B920634406007817BB /* Frameworks */,
+				81C466BA20634406007817BB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				81C466BE20634406007817BB /* PBXTargetDependency */,
+			);
+			name = ChemLabUITests;
+			productName = ChemLabUITests;
+			productReference = 81C466BC20634406007817BB /* ChemLabUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		81C4669320634405007817BB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Deyuan He";
+				TargetAttributes = {
+					81C4669A20634405007817BB = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					81C466B020634405007817BB = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 81C4669A20634405007817BB;
+					};
+					81C466BB20634406007817BB = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 81C4669A20634405007817BB;
+					};
+				};
+			};
+			buildConfigurationList = 81C4669620634405007817BB /* Build configuration list for PBXProject "ChemLab" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 81C4669220634405007817BB;
+			productRefGroup = 81C4669C20634405007817BB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				81C4669A20634405007817BB /* ChemLab */,
+				81C466B020634405007817BB /* ChemLabTests */,
+				81C466BB20634406007817BB /* ChemLabUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		81C4669920634405007817BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81C466A120634405007817BB /* art.scnassets in Resources */,
+				81C466AB20634405007817BB /* LaunchScreen.storyboard in Resources */,
+				81C466A820634405007817BB /* Assets.xcassets in Resources */,
+				81C466A620634405007817BB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466AF20634405007817BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466BA20634406007817BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		81C4669720634405007817BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81C466A320634405007817BB /* ViewController.swift in Sources */,
+				81C4669F20634405007817BB /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466AD20634405007817BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81C466B620634405007817BB /* ChemLabTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81C466B820634406007817BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81C466C120634406007817BB /* ChemLabUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		81C466B320634405007817BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81C4669A20634405007817BB /* ChemLab */;
+			targetProxy = 81C466B220634405007817BB /* PBXContainerItemProxy */;
+		};
+		81C466BE20634406007817BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81C4669A20634405007817BB /* ChemLab */;
+			targetProxy = 81C466BD20634406007817BB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		81C466A420634405007817BB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81C466A520634405007817BB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		81C466A920634405007817BB /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				81C466AA20634405007817BB /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		81C466C320634406007817BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		81C466C420634406007817BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		81C466C620634406007817BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLab/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLab;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		81C466C720634406007817BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLab/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLab;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		81C466C920634406007817BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLabTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLabTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChemLab.app/ChemLab";
+			};
+			name = Debug;
+		};
+		81C466CA20634406007817BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLabTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLabTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChemLab.app/ChemLab";
+			};
+			name = Release;
+		};
+		81C466CC20634406007817BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLabUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLabUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ChemLab;
+			};
+			name = Debug;
+		};
+		81C466CD20634406007817BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QYB43NU3X2;
+				INFOPLIST_FILE = ChemLabUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = BNDS.ChemLabUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ChemLab;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		81C4669620634405007817BB /* Build configuration list for PBXProject "ChemLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81C466C320634406007817BB /* Debug */,
+				81C466C420634406007817BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		81C466C520634406007817BB /* Build configuration list for PBXNativeTarget "ChemLab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81C466C620634406007817BB /* Debug */,
+				81C466C720634406007817BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		81C466C820634406007817BB /* Build configuration list for PBXNativeTarget "ChemLabTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81C466C920634406007817BB /* Debug */,
+				81C466CA20634406007817BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		81C466CB20634406007817BB /* Build configuration list for PBXNativeTarget "ChemLabUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81C466CC20634406007817BB /* Debug */,
+				81C466CD20634406007817BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 81C4669320634405007817BB /* Project object */;
+}
