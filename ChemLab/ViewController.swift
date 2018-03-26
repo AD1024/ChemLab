@@ -190,6 +190,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, G8TesseractDelegate {
         })
     }
     
+    func generateElectronNodes(count: Int, courseRadius: Double) -> SCNNode? {
+        guard let degree: Double = 2.0 * .pi / Double(count) else {
+            return nil
+        }
+        let wrapper: SCNNode = SCNNode()
+        for i in 0..<count {
+            let material = SCNSphere(radius: 0.002)
+            material.firstMaterial?.diffuse.contents = UIColor.blue
+            let electron = SCNNode(geometry: material)
+            electron.position = SCNVector3(courseRadius * sin(Double(i) * degree), 0, courseRadius * cos(Double(i) * degree))
+            wrapper.addChildNode(electron.clone())
+        }
+        return wrapper
+    }
+    
     
     @objc func createAtomByTapping(gestureRecognizer: UIGestureRecognizer) {
 //        let screenCenter : CGPoint = CGPoint(x: self.sceneView.bounds.midX, y: self.sceneView.bounds.midY)
@@ -199,14 +214,38 @@ class ViewController: UIViewController, ARSCNViewDelegate, G8TesseractDelegate {
             let transform : matrix_float4x4 = closestResult.worldTransform
             let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
             let atomNode = self.generateAtomModel(atomName: "H")
-            atomNode.position = position
-            sceneView.scene.rootNode.addChildNode(atomNode)
-            guard let electron = SCNScene(named: "H.scn")?.rootNode.childNode(withName: "electron", recursively: true) else {
-                return
-            }
-            var animation: CABasicAnimation = CABasicAnimation(
-            electron.geometry?.firstMaterial?.isDoubleSided = true
-            sceneView.scene.rootNode.addChildNode(electron)
+//            atomNode.position = position
+//            sceneView.scene.rootNode.addChildNode(atomNode)
+            /*
+            let material = SCNSphere(radius: 0.002)
+            material.firstMaterial?.diffuse.contents = UIColor.red
+            let electron = SCNNode(geometry: material)
+            let e_pos = SCNVector3(0.025, 0, 0)
+            electron.position = e_pos
+            let e_rotationNode = SCNNode()
+            let animation = CABasicAnimation(keyPath: "rotation")
+            animation.keyPath = "rotation"
+            animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
+            animation.duration = 2.0
+            animation.repeatCount = .greatestFiniteMagnitude
+            e_rotationNode.addChildNode(electron)
+            e_rotationNode.addAnimation(animation, forKey: "rotating")
+            let wrapperNode = SCNNode()
+            wrapperNode.addChildNode(atomNode)
+            wrapperNode.addChildNode(e_rotationNode)
+            wrapperNode.position = position */
+            let animation = CABasicAnimation(keyPath: "rotation")
+            animation.keyPath = "rotation"
+            animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
+            animation.duration = 4.0
+            animation.repeatCount = .greatestFiniteMagnitude
+            let wrappedElectron = self.generateElectronNodes(count: 7, courseRadius: 0.025)
+            wrappedElectron?.addAnimation(animation, forKey: "rotating")
+            let wrapperNode = SCNNode()
+            wrapperNode.addChildNode(atomNode)
+            wrapperNode.addChildNode(wrappedElectron!)
+            wrapperNode.position = position
+            self.sceneView.scene.rootNode.addChildNode(wrapperNode)
         } else {
             print("Pending detection...")
         }
