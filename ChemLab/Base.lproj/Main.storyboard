@@ -1,27 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" systemVersion="17A278a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <arscnView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="BrB-h1-WRS">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="ChemLab" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MhA-Tg-sZ7">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    </arscnView>
+                        <subviews>
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F7f-EA-BrT">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </arscnView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="374-w4-Gsa">
+                                <rect key="frame" x="196" y="357" width="22" height="22"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Result" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tjO-Z8-Cqy">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.56191305051813467" green="0.56191305051813467" blue="0.56191305051813467" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="374-w4-Gsa" firstAttribute="centerY" secondItem="MhA-Tg-sZ7" secondAttribute="centerY" id="ANT-FI-qwE"/>
+                            <constraint firstItem="374-w4-Gsa" firstAttribute="centerX" secondItem="MhA-Tg-sZ7" secondAttribute="centerX" id="baa-T7-c3W"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="jyp-P9-hqF"/>
+                    </view>
                     <connections>
-                        <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <outlet property="resultDebugText" destination="tjO-Z8-Cqy" id="cDk-Ra-an6"/>
+                        <outlet property="sceneView" destination="F7f-EA-BrT" id="wdW-sA-iGo"/>
+                        <outlet property="startReaction" destination="374-w4-Gsa" id="zBa-bt-UU0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="139.13043478260872" y="132.88043478260872"/>
         </scene>
     </scenes>
 </document>
