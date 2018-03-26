@@ -82,8 +82,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, G8TesseractDelegate {
     private var viewWidth: CGFloat = 768.0
     
     private var lastResult: String = "..."
-    private var atomList: [String] = ["H", "O"]
-    private let atomColor: [String:UIColor] = ["H": .cyan, "O": .red, "Cl": .yellow, "Na": .green]
+    private var atomList: [String] = ["H", "O", "C", "Cl", "Na"]
+    private var atomRadius: [String:Double] = ["H": 0.005, "O": 0.010, "C": 0.008, "Cl": 0.015, "Na": 0.006]
+    private let electronCourseRadius: [String:Double] = ["H": 0.010, "O": 0.015, "C": 0.013, "Cl": 0.020, "Na": 0.011]
+    private let atomColor: [String:UIColor] = ["H": .white, "O": .red, "Cl": .green, "Na": .purple, "C": .black]
+    private let electronCount: [String:Int] = ["H": 1, "O": 2, "C": 4, "Cl": 7, "Na": 1]
+    
     
     @IBOutlet var sceneView: ARSCNView!
     
@@ -169,12 +173,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, G8TesseractDelegate {
         atomNameTag.firstMaterial?.diffuse.contents = self.atomColor[atomName]
         atomNameTag.firstMaterial?.specular.contents = UIColor.white
         atomNameTag.firstMaterial?.isDoubleSided = true
-        atomNameTag.chamferRadius = CGFloat(0.005)
+        atomNameTag.chamferRadius = CGFloat(Float(atomRadius[atomName]! + 0.03))
         let (minBound, maxBound) = atomNameTag.boundingBox
         let atomNameTagNode = SCNNode(geometry: atomNameTag)
-        atomNameTagNode.pivot = SCNMatrix4MakeTranslation( (maxBound.x - minBound.x)/2, minBound.y, 0.12)
+        atomNameTagNode.pivot = SCNMatrix4MakeTranslation( (maxBound.x - minBound.x)/2, minBound.y, Float(atomRadius[atomName]! + 0.035))
         atomNameTagNode.scale = SCNVector3(0.2, 0.2, 0.2)
-        let sphere = SCNSphere(radius: 0.010)
+        atomNameTagNode.position = SCNVector3(0, Float(atomRadius[atomName]! + 0.005), 0)
+        let sphere = SCNSphere(radius: CGFloat(atomRadius[atomName]!))
         sphere.firstMaterial?.diffuse.contents = self.atomColor[atomName]
         let sphereNode = SCNNode(geometry: sphere)
         let wrapperNode = SCNNode()
@@ -207,45 +212,27 @@ class ViewController: UIViewController, ARSCNViewDelegate, G8TesseractDelegate {
     
     
     @objc func createAtomByTapping(gestureRecognizer: UIGestureRecognizer) {
-//        let screenCenter : CGPoint = CGPoint(x: self.sceneView.bounds.midX, y: self.sceneView.bounds.midY)
         let HitTestResults : [ARHitTestResult] = sceneView.hitTest(gestureRecognizer.location(in: gestureRecognizer.view), types: ARHitTestResult.ResultType.featurePoint)
         
         if let closestResult = HitTestResults.first {
-            let transform : matrix_float4x4 = closestResult.worldTransform
-            let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
-            let atomNode = self.generateAtomModel(atomName: "H")
-//            atomNode.position = position
-//            sceneView.scene.rootNode.addChildNode(atomNode)
-            /*
-            let material = SCNSphere(radius: 0.002)
-            material.firstMaterial?.diffuse.contents = UIColor.red
-            let electron = SCNNode(geometry: material)
-            let e_pos = SCNVector3(0.025, 0, 0)
-            electron.position = e_pos
-            let e_rotationNode = SCNNode()
-            let animation = CABasicAnimation(keyPath: "rotation")
-            animation.keyPath = "rotation"
-            animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
-            animation.duration = 2.0
-            animation.repeatCount = .greatestFiniteMagnitude
-            e_rotationNode.addChildNode(electron)
-            e_rotationNode.addAnimation(animation, forKey: "rotating")
-            let wrapperNode = SCNNode()
-            wrapperNode.addChildNode(atomNode)
-            wrapperNode.addChildNode(e_rotationNode)
-            wrapperNode.position = position */
-            let animation = CABasicAnimation(keyPath: "rotation")
-            animation.keyPath = "rotation"
-            animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
-            animation.duration = 4.0
-            animation.repeatCount = .greatestFiniteMagnitude
-            let wrappedElectron = self.generateElectronNodes(count: 7, courseRadius: 0.025)
-            wrappedElectron?.addAnimation(animation, forKey: "rotating")
-            let wrapperNode = SCNNode()
-            wrapperNode.addChildNode(atomNode)
-            wrapperNode.addChildNode(wrappedElectron!)
-            wrapperNode.position = position
-            self.sceneView.scene.rootNode.addChildNode(wrapperNode)
+            if atomList.contains(self.resultDebugText.text!) {
+                let transform : matrix_float4x4 = closestResult.worldTransform
+                let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
+                let atomNode = self.generateAtomModel(atomName: self.resultDebugText.text!)
+                let animation = CABasicAnimation(keyPath: "rotation")
+                animation.keyPath = "rotation"
+                animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
+                animation.duration = 2.5
+                animation.repeatCount = .greatestFiniteMagnitude
+                let wrappedElectron = self.generateElectronNodes(count: electronCount[self.resultDebugText.text!]!, courseRadius: electronCourseRadius[self.resultDebugText.text!]!)
+                wrappedElectron?.addAnimation(animation, forKey: "rotating")
+                let wrapperNode = SCNNode()
+                wrapperNode.addChildNode(atomNode)
+                wrapperNode.addChildNode(wrappedElectron!)
+                wrapperNode.name = "electrons"
+                wrapperNode.position = position
+                self.sceneView.scene.rootNode.addChildNode(wrapperNode)
+            }
         } else {
             print("Pending detection...")
         }
