@@ -15,6 +15,9 @@
 		81EE3E0F2069338400E6314A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81EE3E0D2069338400E6314A /* LaunchScreen.storyboard */; };
 		81EE3E172069C45300E6314A /* ARObjectUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E162069C45300E6314A /* ARObjectUtils.swift */; };
 		81EE3E192069C9EF00E6314A /* SwiftNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E182069C9EF00E6314A /* SwiftNotice.swift */; };
+		81EE3E1B2069D25900E6314A /* ReactionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E1A2069D25900E6314A /* ReactionUtil.swift */; };
+		81EE3E1D2069D3D400E6314A /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E1C2069D3D400E6314A /* PriorityQueue.swift */; };
+		81EE3E21206A777900E6314A /* AnimationToolKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E20206A777900E6314A /* AnimationToolKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,9 @@
 		81EE3E102069338400E6314A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		81EE3E162069C45300E6314A /* ARObjectUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARObjectUtils.swift; sourceTree = "<group>"; };
 		81EE3E182069C9EF00E6314A /* SwiftNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNotice.swift; sourceTree = "<group>"; };
+		81EE3E1A2069D25900E6314A /* ReactionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionUtil.swift; sourceTree = "<group>"; };
+		81EE3E1C2069D3D400E6314A /* PriorityQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
+		81EE3E20206A777900E6314A /* AnimationToolKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationToolKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +75,9 @@
 				81EE3E0D2069338400E6314A /* LaunchScreen.storyboard */,
 				81EE3E102069338400E6314A /* Info.plist */,
 				81EE3E162069C45300E6314A /* ARObjectUtils.swift */,
+				81EE3E20206A777900E6314A /* AnimationToolKit.swift */,
+				81EE3E1A2069D25900E6314A /* ReactionUtil.swift */,
+				81EE3E1C2069D3D400E6314A /* PriorityQueue.swift */,
 			);
 			path = ARAtomicLab;
 			sourceTree = "<group>";
@@ -149,7 +158,10 @@
 				81EE3E172069C45300E6314A /* ARObjectUtils.swift in Sources */,
 				81EE3E072069338400E6314A /* ViewController.swift in Sources */,
 				81EE3E032069338400E6314A /* AppDelegate.swift in Sources */,
+				81EE3E1B2069D25900E6314A /* ReactionUtil.swift in Sources */,
 				81EE3E192069C9EF00E6314A /* SwiftNotice.swift in Sources */,
+				81EE3E21206A777900E6314A /* AnimationToolKit.swift in Sources */,
+				81EE3E1D2069D3D400E6314A /* PriorityQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -72,16 +72,90 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private let atomColor: [String:UIColor] = ["H": .white, "O": .red, "Cl": .green, "Na": .purple, "C": .black]
     private let electronCount: [String:Int] = ["H": 1, "O": 2, "C": 4, "Cl": 7, "Na": 1]
     private var hasDetectedNoticifation: Bool = false
-    
-    
+    private var detectedReaction: [[String: Int]] = []
+    private var atomAdded: PriorityQueue = PriorityQueue<String>()
+    private var reactedNodes: Set<SCNNode> = []
+
     @IBOutlet var sceneView: ARSCNView!
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    // Enable shake detection
+    override var canBecomeFirstResponder: Bool {
+        get {
+            return true
+        }
+    }
+    
+    override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+//            self.noticeInfo("Shaking!!", autoClear: true, autoClearTime: 2)
+            for each in detectedReaction {
+                var atomCount = 0
+                for (_, count) in each {
+                    atomCount += count
+                }
+                if atomCount == 2 {
+                    var atomNodes: [String] = []
+                    for (atom, _) in each {
+                        atomNodes.append(atom)
+                    }
+                    let product = ReactionDetector.translateReaction(atomSet: Set(atomNodes))
+                    var nodeOne = self.sceneView.scene.rootNode.childNodes.filter({
+                        return !self.reactedNodes.contains($0) && $0.name == atomNodes[0]
+                    })[0]
+                    let potentialNodetwo = self.sceneView.scene.rootNode.childNodes.filter({return $0.name == atomNodes[1] && !self.reactedNodes.contains($0)})
+                    var nodeTwo = potentialNodetwo.map({
+                        return (AtomUtil.calcDistance(fi: nodeOne, se: $0), $0)
+                    }).sorted(by: {(fi: (Float, SCNNode), se: (Float, SCNNode)) in
+                        return fi.0 < se.0
+                    })[0].1
+                    self.reactedNodes.insert(nodeOne)
+                    self.reactedNodes.insert(nodeTwo)
+                    let centerPos: SCNVector3 = AtomUtil.centerOfTwo(fi: nodeOne, se: nodeTwo)
+                    if atomRadius[nodeOne.name!]! > atomRadius[nodeTwo.name!]! {
+                        swap(&nodeOne, &nodeTwo)
+                    }
+                    let moveAnimation = CABasicAnimationBuilder
+                        .setKeyPath("position")
+                        .setToValue(centerPos)
+                        .setDuration(2.0)
+                        .setFillMode(kCAFillModeForwards)
+                        .isRemovedOnCompletion(false).build()
+                    let moveAnimationForSmallerAtom = CABasicAnimationBuilder
+                        .setKeyPath("position")
+                        .setToValue(AtomUtil.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(atomRadius[nodeTwo.name!]!)))
+                        .setDuration(2.0)
+                        .setFillMode(kCAFillModeForwards)
+                        .isRemovedOnCompletion(false).build()
+                    let fadeAnimation = CABasicAnimationBuilder
+                        .setKeyPath("opacity")
+                        .setFillMode(kCAFillModeForwards)
+                        .setDuration(1.5)
+                        .isRemovedOnCompletion(false)
+                        .setToValue(0.0)
+                        .build()
+                    nodeOne.childNode(withName: "atomNameTag", recursively: true)?.addAnimation(fadeAnimation, forKey: "textFading")
+                    nodeTwo.childNode(withName: "atomNameTag", recursively: true)?.addAnimation(fadeAnimation, forKey: "textFading")
+                    nodeOne.childNode(withName: "electrons", recursively: true)?.addAnimation(fadeAnimation, forKey: "fading")
+                    nodeTwo.childNode(withName: "electrons", recursively: true)?.addAnimation(fadeAnimation, forKey: "fading")
+                    nodeOne.addAnimation(moveAnimation, forKey: "moving")
+                    nodeTwo.addAnimation(moveAnimationForSmallerAtom, forKey: "moving")
+                    let productTextNode = AtomUtil.makeTextNode(msg: product)
+                    productTextNode.position = SCNVector3(centerPos.x, centerPos.y - 0.17, centerPos.z)
+                    self.sceneView.scene.rootNode.addChildNode(productTextNode)
+                } else {
+                    
+                }
+            }
+            self.detectedReaction.removeAll()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.becomeFirstResponder()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.createAtomByTapping(gestureRecognizer:)))
         view.addGestureRecognizer(tapGesture)
@@ -120,6 +194,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        self.resignFirstResponder()
         super.viewWillDisappear(animated)
         
         // Pause the view's session
@@ -145,6 +220,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.sceneView.scene.rootNode.childNodes.map({
             $0.removeFromParentNode()
         })
+        self.atomAdded.clear()
+        self.detectedReaction.removeAll()
+        self.reactedNodes.removeAll()
     }
     
     
@@ -158,6 +236,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let atomName = self.resultDebugText.text!
                 guard let wrapperNode = AtomUtil.makeAtomWithElectrons(name: atomName, radius: self.atomRadius[atomName]!, color: self.atomColor[atomName]!, numberOfElectrons: self.electronCount[atomName]!, electronOrbitRadius: self.electronCourseRadius[atomName]!, position: position) else {
                     return
+                }
+                atomAdded.insert(data: atomName)
+                if let detectReactionResult = ReactionDetector.detectReaction(currentHeap: atomAdded.clone()) {
+                    detectedReaction.append(detectReactionResult.0)
+                    self.noticeOnlyText("New Reaction! Shake to react")
+                    atomAdded.clear()
                 }
                 self.sceneView.scene.rootNode.addChildNode(wrapperNode)
             }
@@ -188,13 +272,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             return
         }
         var ocrImage = UIImage(cgImage: cgImage!).image(withRotation: CGFloat(-0.5 * .pi))
-//        ocrImage = self.prepareImageForCrop(using: ocrImage)
         if ocrImage.size.height > 0 && ocrImage.size.width > 0 {
             let barcodeRequest = VNDetectBarcodesRequest(completionHandler: {request, error in
                 guard let resultSet = request.results else { return }
                 for result in resultSet {
                     if let barcode = result as? VNBarcodeObservation {
-                        print("Symbology: \(barcode.symbology.rawValue)")
                         if let ans = barcode.payloadStringValue {
                             DispatchQueue.main.async {
                                 if self.atomList.contains(ans) {
