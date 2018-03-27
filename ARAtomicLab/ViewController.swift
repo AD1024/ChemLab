@@ -46,20 +46,6 @@ extension UIImage {
     }
 }
 
-extension SCNNode {
-    
-    func addNodeClonesWithNames(fromScene: SCNScene,   nodeNames: [String]  ) {
-        for nodename in nodeNames {
-            self.addClonedChildNode(node: fromScene.rootNode.childNode(withName: nodename, recursively: true)! )
-        }
-    }
-    
-    func addClonedChildNode(node: SCNNode) {
-        self.addChildNode(node.clone() as! SCNNode)
-    }
-}
-
-
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     // CoreML
@@ -78,12 +64,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private var viewHeight: CGFloat = 1024.0
     private var viewWidth: CGFloat = 768.0
     
+    // Vars
     private var lastResult: String = "..."
     private var atomList: [String] = ["H", "O", "C", "Cl", "Na"]
     private var atomRadius: [String:Double] = ["H": 0.005, "O": 0.010, "C": 0.008, "Cl": 0.015, "Na": 0.006]
     private let electronCourseRadius: [String:Double] = ["H": 0.010, "O": 0.015, "C": 0.013, "Cl": 0.020, "Na": 0.011]
     private let atomColor: [String:UIColor] = ["H": .white, "O": .red, "Cl": .green, "Na": .purple, "C": .black]
     private let electronCount: [String:Int] = ["H": 1, "O": 2, "C": 4, "Cl": 7, "Na": 1]
+    private var hasDetectedNoticifation: Bool = false
     
     
     @IBOutlet var sceneView: ARSCNView!
@@ -153,51 +141,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    
-    func generateAtomModel(atomName: String) -> SCNNode {
-        let constraint = SCNBillboardConstraint()
-        constraint.freeAxes = SCNBillboardAxis.Y
-        let atomNameTag = SCNText(string: atomName, extrusionDepth: 0.005)
-        atomNameTag.font = UIFont(name: "Courier", size: 0.15)
-        atomNameTag.alignmentMode = kCAAlignmentCenter
-        atomNameTag.firstMaterial?.diffuse.contents = self.atomColor[atomName]
-        atomNameTag.firstMaterial?.specular.contents = UIColor.white
-        atomNameTag.firstMaterial?.isDoubleSided = true
-        atomNameTag.chamferRadius = CGFloat(Float(atomRadius[atomName]! + 0.03))
-        let (minBound, maxBound) = atomNameTag.boundingBox
-        let atomNameTagNode = SCNNode(geometry: atomNameTag)
-        atomNameTagNode.pivot = SCNMatrix4MakeTranslation( (maxBound.x - minBound.x)/2, minBound.y, Float(atomRadius[atomName]! + 0.035))
-        atomNameTagNode.scale = SCNVector3(0.2, 0.2, 0.2)
-        atomNameTagNode.position = SCNVector3(0, Float(atomRadius[atomName]! + 0.005), 0)
-        let sphere = SCNSphere(radius: CGFloat(atomRadius[atomName]!))
-        sphere.firstMaterial?.diffuse.contents = self.atomColor[atomName]
-        let sphereNode = SCNNode(geometry: sphere)
-        let wrapperNode = SCNNode()
-        wrapperNode.addChildNode(atomNameTagNode)
-        wrapperNode.addChildNode(sphereNode)
-        wrapperNode.constraints = [constraint]
-        return wrapperNode
-    }
-    
     @objc func clearScene(gestureRecognizer: UIGestureRecognizer) {
         self.sceneView.scene.rootNode.childNodes.map({
             $0.removeFromParentNode()
         })
-    }
-    
-    func generateElectronNodes(count: Int, courseRadius: Double) -> SCNNode? {
-        guard let degree: Double = 2.0 * .pi / Double(count) else {
-            return nil
-        }
-        let wrapper: SCNNode = SCNNode()
-        for i in 0..<count {
-            let material = SCNSphere(radius: 0.002)
-            material.firstMaterial?.diffuse.contents = UIColor.blue
-            let electron = SCNNode(geometry: material)
-            electron.position = SCNVector3(courseRadius * sin(Double(i) * degree), 0, courseRadius * cos(Double(i) * degree))
-            wrapper.addChildNode(electron.clone())
-        }
-        return wrapper
     }
     
     
@@ -208,22 +155,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             if atomList.contains(self.resultDebugText.text!) {
                 let transform : matrix_float4x4 = closestResult.worldTransform
                 let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
-                let atomNode = self.generateAtomModel(atomName: self.resultDebugText.text!)
-                let animation = CABasicAnimation(keyPath: "rotation")
-                animation.keyPath = "rotation"
-                animation.toValue = SCNVector4Make(0, 1, 0, .pi * 2)
-                animation.duration = 2.5
-                animation.repeatCount = .greatestFiniteMagnitude
-                let wrappedElectron = self.generateElectronNodes(count: electronCount[self.resultDebugText.text!]!, courseRadius: electronCourseRadius[self.resultDebugText.text!]!)
-                wrappedElectron?.addAnimation(animation, forKey: "rotating")
-                let wrapperNode = SCNNode()
-                wrapperNode.addChildNode(atomNode)
-                wrapperNode.addChildNode(wrappedElectron!)
-                wrapperNode.name = "electrons"
-                wrapperNode.position = position
+                let atomName = self.resultDebugText.text!
+                guard let wrapperNode = AtomUtil.makeAtomWithElectrons(name: atomName, radius: self.atomRadius[atomName]!, color: self.atomColor[atomName]!, numberOfElectrons: self.electronCount[atomName]!, electronOrbitRadius: self.electronCourseRadius[atomName]!, position: position) else {
+                    return
+                }
                 self.sceneView.scene.rootNode.addChildNode(wrapperNode)
             }
         } else {
+            self.noticeInfo("Initializing...", autoClear: true, autoClearTime: 4)
             print("Pending detection...")
         }
     }
@@ -233,68 +172,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.performQRCodeIdentificatation()
             self.loopQRCodeIdentification()
         })
-    }
-    
-    func cropImage(image: UIImage, cropRect: CGRect) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(cropRect.size, false, image.scale)
-        let origin = CGPoint(x: 0, y: -self.viewHeight / CGFloat(2.0))
-        image.draw(at: origin)
-        let result = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return result
-    }
-    
-    func prepareImageForCrop (using image: UIImage) -> UIImage {
-        let degreesToRadians: (CGFloat) -> CGFloat = {
-            return $0 / 180.0 * CGFloat(Double.pi)
-        }
-        
-        let imageOrientation = image.imageOrientation
-        let degree = image.detectOrientationDegree()
-        let cropSize = CGSize(width: 400, height: 110)
-        
-        //Downscale
-        let cgImage = image.cgImage!
-        
-        let width = cropSize.width
-        let height = image.size.height / image.size.width * cropSize.width
-        
-        let bitsPerComponent = cgImage.bitsPerComponent
-        let bytesPerRow = cgImage.bytesPerRow
-        let colorSpace = cgImage.colorSpace
-        let bitmapInfo = cgImage.bitmapInfo
-        
-        let context = CGContext(data: nil,
-                                width: Int(width),
-                                height: Int(height),
-                                bitsPerComponent: bitsPerComponent,
-                                bytesPerRow: bytesPerRow,
-                                space: colorSpace!,
-                                bitmapInfo: bitmapInfo.rawValue)
-        
-        context!.interpolationQuality = CGInterpolationQuality.none
-        // Rotate the image context
-        context?.rotate(by: degreesToRadians(degree));
-        // Now, draw the rotated/scaled image into the context
-        context?.scaleBy(x: -1.0, y: -1.0)
-        
-        //Crop
-        switch imageOrientation {
-        case .right, .rightMirrored:
-            context?.draw(cgImage, in: CGRect(x: -height, y: 0, width: height, height: width))
-        case .left, .leftMirrored:
-            context?.draw(cgImage, in: CGRect(x: 0, y: -width, width: height, height: width))
-        case .up, .upMirrored:
-            context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        case .down, .downMirrored:
-            context?.draw(cgImage, in: CGRect(x: -width, y: -height, width: width, height: height))
-        }
-        
-        let calculatedFrame = CGRect(x: 0, y: CGFloat((height - cropSize.height)/2.0), width: cropSize.width, height: cropSize.height)
-        let scaledCGImage = context?.makeImage()?.cropping(to: calculatedFrame)
-        
-        
-        return UIImage(cgImage: scaledCGImage!)
     }
     
     func performQRCodeIdentificatation() {
@@ -320,8 +197,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         print("Symbology: \(barcode.symbology.rawValue)")
                         if let ans = barcode.payloadStringValue {
                             DispatchQueue.main.async {
-                                self.lastResult = ans
-                                self.resultDebugText.text = ans
+                                if self.atomList.contains(ans) {
+                                    if ans != self.lastResult {
+                                        self.clearAllNotice()
+                                        self.noticeOnlyText("\(ans) detected! Tap anywhere to place it.")
+                                        self.lastResult = ans
+                                        self.resultDebugText.text = ans
+                                    }
+                                }
                             }
                         }
                     }
@@ -337,48 +220,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func VNRequestHandler(request: VNRequest, error: Error?) {
-        if error != nil {
-            print("Error: \(error?.localizedDescription)")
-        } else {
-            guard let observations = request.results else {
-                print("Not found")
-                return
-            }
-            let classifications = observations[0...1]
-                .flatMap({$0 as? VNClassificationObservation})
-                .map({($0.identifier, $0.confidence)})
-            DispatchQueue.main.async {
-                /*
-                for item in classifications {
-                    print("Identifier:\(item.0)    Confidence: \(item.1)")
-                }*/
-                var maxn: Float = -1.0
-                var identifier: String  = "..."
-                for item in classifications {
-                    if maxn < item.1 {
-                        maxn = item.1
-                        identifier = item.0
-                    }
-                }
-                if self.result != identifier && self.confidence < maxn {
-                    self.result = identifier
-                    self.confidence = maxn
-                    print("\(self.result)   \(self.confidence)")
-                    // self.showInfoCard(self.result)
-                }
-            }
-        }
-    }
-
-    // MARK: - ARSCNViewDelegate
-    
 /*
     // Override to create and configure nodes for anchors added to the view's session.
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
+
     }
 */
     

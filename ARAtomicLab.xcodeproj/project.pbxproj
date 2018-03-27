@@ -13,6 +13,8 @@
 		81EE3E0A2069338400E6314A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81EE3E082069338400E6314A /* Main.storyboard */; };
 		81EE3E0C2069338400E6314A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 81EE3E0B2069338400E6314A /* Assets.xcassets */; };
 		81EE3E0F2069338400E6314A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81EE3E0D2069338400E6314A /* LaunchScreen.storyboard */; };
+		81EE3E172069C45300E6314A /* ARObjectUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E162069C45300E6314A /* ARObjectUtils.swift */; };
+		81EE3E192069C9EF00E6314A /* SwiftNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EE3E182069C9EF00E6314A /* SwiftNotice.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		81EE3E0B2069338400E6314A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		81EE3E0E2069338400E6314A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		81EE3E102069338400E6314A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81EE3E162069C45300E6314A /* ARObjectUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARObjectUtils.swift; sourceTree = "<group>"; };
+		81EE3E182069C9EF00E6314A /* SwiftNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftNotice.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,10 +63,12 @@
 				81EE3E022069338400E6314A /* AppDelegate.swift */,
 				81EE3E042069338400E6314A /* art.scnassets */,
 				81EE3E062069338400E6314A /* ViewController.swift */,
+				81EE3E182069C9EF00E6314A /* SwiftNotice.swift */,
 				81EE3E082069338400E6314A /* Main.storyboard */,
 				81EE3E0B2069338400E6314A /* Assets.xcassets */,
 				81EE3E0D2069338400E6314A /* LaunchScreen.storyboard */,
 				81EE3E102069338400E6314A /* Info.plist */,
+				81EE3E162069C45300E6314A /* ARObjectUtils.swift */,
 			);
 			path = ARAtomicLab;
 			sourceTree = "<group>";
@@ -140,8 +146,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				81EE3E172069C45300E6314A /* ARObjectUtils.swift in Sources */,
 				81EE3E072069338400E6314A /* ViewController.swift in Sources */,
 				81EE3E032069338400E6314A /* AppDelegate.swift in Sources */,
+				81EE3E192069C9EF00E6314A /* SwiftNotice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
