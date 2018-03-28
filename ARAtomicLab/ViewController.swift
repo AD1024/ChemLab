@@ -66,11 +66,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // Vars
     private var lastResult: String = "..."
-    private var atomList: [String] = ["H", "O", "C", "Cl", "Na"]
-    private var atomRadius: [String:Double] = ["H": 0.005, "O": 0.010, "C": 0.008, "Cl": 0.015, "Na": 0.006]
-    private let electronCourseRadius: [String:Double] = ["H": 0.010, "O": 0.015, "C": 0.013, "Cl": 0.020, "Na": 0.011]
-    private let atomColor: [String:UIColor] = ["H": .white, "O": .red, "Cl": .green, "Na": .purple, "C": .black]
-    private let electronCount: [String:Int] = ["H": 1, "O": 2, "C": 4, "Cl": 7, "Na": 1]
     private var hasDetectedNoticifation: Bool = false
     private var detectedReaction: [([String: Int], String)] = [] // required atom count & product
     private var atomAdded: PriorityQueue = PriorityQueue<String>()
@@ -124,7 +119,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     self.reactedNodes.insert(nodeOne)
                     self.reactedNodes.insert(nodeTwo)
                     let centerPos: SCNVector3 = AtomUtils.centerOfTwo(fi: nodeOne, se: nodeTwo)
-                    if atomRadius[nodeOne.name!]! > atomRadius[nodeTwo.name!]! {
+                    if Constants.atomRadius[nodeOne.name!]! > Constants.atomRadius[nodeTwo.name!]! {
                         swap(&nodeOne, &nodeTwo)
                     }
                     let moveAnimation = CABasicAnimationBuilder
@@ -135,7 +130,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         .isRemovedOnCompletion(false).build()
                     let moveAnimationForSmallerAtom = CABasicAnimationBuilder
                         .setKeyPath("position")
-                        .setToValue(AtomUtils.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(atomRadius[nodeTwo.name!]!)))
+                        .setToValue(AtomUtils.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(Constants.atomRadius[nodeTwo.name!]!)))
                         .setDuration(2.0)
                         .setFillMode(kCAFillModeForwards)
                         .isRemovedOnCompletion(false).build()
@@ -159,17 +154,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     let fadeAnimation = CABasicAnimationBuilder
                         .setKeyPath("opacity")
                         .setFillMode(kCAFillModeForwards)
-                        .setDuration(1.5)
+                        .setDuration(1.8)
                         .isRemovedOnCompletion(false)
                         .setToValue(0.0)
                         .build()
+                    let fadeInAnimation = CABasicAnimationBuilder
+                        .setKeyPath("opacity")
+                        .setFillMode(kCAFillModeForwards)
+                        .setDuration(2.3)
+                        .setFromValue(0.0)
+                        .isRemovedOnCompletion(false)
+                        .setToValue(1.0)
+                        .build()
                     atomNodes = atomNodes.sorted(by: {(x: String, y: String) in
-                        return self.atomRadius[x]! > self.atomRadius[y]!
+                        return Constants.atomRadius[x]! > Constants.atomRadius[y]!
                     })
-                    let centerNodesList = getUnreactedNodeByName(atomNodes[0])
+                    guard let centerNodeName = ReactionDetector.getReactionPrimaryAtom(reactant: Set(atomNodes)) else {
+                        print("Unknown reaction! No primary found")
+                        return
+                    }
+                    let centerNodesList = getUnreactedNodeByName(centerNodeName)
                     if centerNodesList.count > 0 {
                         let centerNode = centerNodesList[0]
-                        let remaining = Array(atomNodes[1...])
+                        atomNodes.remove(at: atomNodes.index(of: centerNodeName)!)
+                        let remaining = Array(atomNodes)
                         reactedNodes.insert(centerNode)
                         let movingAnimation = CABasicAnimationBuilder
                             .setKeyPath("position")
@@ -196,8 +204,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                             each.addAnimation(movingAnimation, forKey: "moving")
                             each.addAnimation(fadeAnimation, forKey: "fading")
                         }
+                        guard let productNode = AtomUtils.makeCombinedAtomsBy(name: product, position: centerNode.position) else {
+                            print("\(product) does not have model")
+                            return
+                        }
+                        let productTextNode = AtomUtils.makeTextNode(msg: product)
+                        productTextNode.position = SCNVector3(centerNode.position.x, centerNode.position.y - 0.17, centerNode.position.z)
+                        productTextNode.addAnimation(fadeInAnimation, forKey: "fadeIn")
+                        productNode.addAnimation(fadeInAnimation, forKey: "fadeIn")
+                        self.sceneView.scene.rootNode.addChildNode(productNode)
+                        self.sceneView.scene.rootNode.addChildNode(productTextNode)
                     }
-                    
                 }
             }
             self.detectedReaction.removeAll()
@@ -258,7 +275,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func getAtomScene(name: String) -> SCNScene? {
-        if self.atomList.contains(name) {
+        if Constants.atomList.contains(name) {
             let scene = SCNScene(named: "art.scnassets/\(name).scn")
             return scene
         } else {
@@ -281,11 +298,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let HitTestResults : [ARHitTestResult] = sceneView.hitTest(gestureRecognizer.location(in: gestureRecognizer.view), types: ARHitTestResult.ResultType.featurePoint)
         
         if let closestResult = HitTestResults.first {
-            if atomList.contains(self.resultDebugText.text!) {
+            if Constants.atomList.contains(self.resultDebugText.text!) {
                 let transform : matrix_float4x4 = closestResult.worldTransform
                 let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
                 let atomName = self.resultDebugText.text!
-                guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: self.atomRadius[atomName]!, color: self.atomColor[atomName]!, numberOfElectrons: self.electronCount[atomName]!, electronOrbitRadius: self.electronCourseRadius[atomName]!, position: position) else {
+                guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: Constants.atomRadius[atomName]!, color: Constants.atomColor[atomName]!, numberOfElectrons: Constants.electronCount[atomName]!, electronOrbitRadius: Constants.electronCourseRadius[atomName]!, position: position) else {
                     return
                 }
                 atomAdded.insert(data: atomName)
@@ -330,7 +347,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     if let barcode = result as? VNBarcodeObservation {
                         if let ans = barcode.payloadStringValue {
                             DispatchQueue.main.async {
-                                if self.atomList.contains(ans) {
+                                if Constants.atomList.contains(ans) {
                                     if ans != self.lastResult {
                                         self.clearAllNotice()
                                         self.noticeOnlyText("\(ans) detected! Tap anywhere to place it.")

@@ -66,6 +66,50 @@ class AtomUtils {
         return wrapperNode
     }
     
+    public static func makeAtomWithoutTag(radius: Double, color: UIColor) -> SCNNode {
+        let material = SCNSphere(radius: CGFloat(radius))
+        material.firstMaterial?.diffuse.contents = color
+        let resultNode = SCNNode(geometry: material)
+        return resultNode
+    }
+    
+    public static func makeCombinedAtoms(primaryAtom: SCNNode, secondaryAtoms: [SCNNode: Int], arcRadius: Float, radiusToPrimAtom: Float, position: SCNVector3, startOffset: Float?) -> SCNNode {
+        let secondaryWrapper = SCNNode()
+        let wrappedCombinedAtoms = SCNNode()
+        var i = 1
+        var offset: Float = 0.0
+        if let unwrap = startOffset {
+            offset = unwrap
+        }
+        for (instance, count) in secondaryAtoms {
+            for _ in 1...count {
+                let clone = instance.clone()
+                clone.position = SCNVector3(radiusToPrimAtom * sin(Float(i) * (arcRadius + offset)), 0, radiusToPrimAtom * cos(Float(i) * (arcRadius + offset)))
+                secondaryWrapper.addChildNode(clone)
+                i += 1
+            }
+        }
+        wrappedCombinedAtoms.position = position
+        wrappedCombinedAtoms.addChildNode(primaryAtom)
+        wrappedCombinedAtoms.addChildNode(secondaryWrapper)
+        return wrappedCombinedAtoms
+    }
+    
+    public static func makeCombinedAtomsBy(name: String, position: SCNVector3) -> SCNNode? {
+        if name == "H2O" {
+            let pNode = makeAtomWithoutTag(radius: Constants.atomRadius["O"]!, color: .red)
+            let sNode = makeAtomWithoutTag(radius: Constants.atomRadius["H"]!, color: .white)
+            let retNode = makeCombinedAtoms(primaryAtom: pNode, secondaryAtoms: [sNode:2], arcRadius: Float(108.0 / 180.0 * .pi), radiusToPrimAtom: Float(Constants.atomRadius["O"]!), position: position, startOffset: nil)
+            return retNode
+        } else if name == "CO2" {
+            let pNode = makeAtomWithoutTag(radius: Constants.atomRadius["C"]!, color: Constants.atomColor["C"]!)
+            let sNode = makeAtomWithoutTag(radius: Constants.atomRadius["O"]!, color: Constants.atomColor["O"]!)
+            let retNode = makeCombinedAtoms(primaryAtom: pNode, secondaryAtoms: [sNode:2], arcRadius: Float(1.0 * .pi), radiusToPrimAtom: Float(Constants.atomRadius["C"]!) + Float(Constants.atomRadius["C"]! / 2.0), position: position, startOffset: nil)
+            return retNode
+        }
+        return nil
+    }
+    
     public static func generateElectronNodes(count: Int, courseRadius: Double) -> SCNNode? {
         if count != 0 {
             let degree: Double = 2.0 * .pi / Double(count)
