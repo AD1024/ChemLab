@@ -82,8 +82,8 @@
 			children = (
 				811489B8206B3BAA0085557B /* Utils */,
 				81EE3E022069338400E6314A /* AppDelegate.swift */,
-				81EE3E042069338400E6314A /* art.scnassets */,
 				81EE3E062069338400E6314A /* ViewController.swift */,
+				81EE3E042069338400E6314A /* art.scnassets */,
 				81EE3E082069338400E6314A /* Main.storyboard */,
 				81EE3E0B2069338400E6314A /* Assets.xcassets */,
 				81EE3E0D2069338400E6314A /* LaunchScreen.storyboard */,

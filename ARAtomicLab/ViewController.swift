@@ -68,7 +68,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private var lastResult: String = "..."
     private var hasDetectedNoticifation: Bool = false
     private var detectedReaction: [([String: Int], String)] = [] // required atom count & product
-    private var atomAdded: PriorityQueue = PriorityQueue<String>()
+//    private var atomAdded: PriorityQueue = PriorityQueue<String>()
+    private var atomAdded: [String: Int] = [:]
     private var reactedNodes: Set<SCNNode> = []
 
     @IBOutlet var sceneView: ARSCNView!
@@ -92,12 +93,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
+        print("Begin reaction: \(atomAdded)")
         if motion == .motionShake {
 //            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
             for each in detectedReaction {
                 var atomCount = 0
-                for (_, count) in each.0 {
+                print("\(each) reaction")
+                for (atom, count) in each.0 {
                     atomCount += count
+                    atomAdded[atom]! -= count
                 }
                 var atomNodes: [String] = []
                 for (atom, count) in each.0 {
@@ -110,13 +114,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     var nodeOne = self.sceneView.scene.rootNode.childNodes.filter({
                         return !self.reactedNodes.contains($0) && $0.name == atomNodes[0]
                     })[0]
+                    self.reactedNodes.insert(nodeOne)
                     let potentialNodetwo = self.sceneView.scene.rootNode.childNodes.filter({return $0.name == atomNodes[1] && !self.reactedNodes.contains($0)})
                     var nodeTwo = potentialNodetwo.map({
                         return (AtomUtils.calcDistance(fi: nodeOne, se: $0), $0)
                     }).sorted(by: {(fi: (Float, SCNNode), se: (Float, SCNNode)) in
                         return fi.0 < se.0
                     })[0].1
-                    self.reactedNodes.insert(nodeOne)
                     self.reactedNodes.insert(nodeTwo)
                     let centerPos: SCNVector3 = AtomUtils.centerOfTwo(fi: nodeOne, se: nodeTwo)
                     if Constants.atomRadius[nodeOne.name!]! > Constants.atomRadius[nodeTwo.name!]! {
@@ -195,6 +199,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                                 remainingNodes.append(node)
                             } else {
                                 print("Error while reacting: Insufficient remaining atom")
+                                return
                             }
                         }
                         centerNode.addAnimation(fadeAnimation, forKey: "fading")
@@ -219,6 +224,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
             self.detectedReaction.removeAll()
         }
+        print("End reaction: \(atomAdded)")
+        detectedReaction.removeAll()
     }
     
     override func viewDidLoad() {
@@ -288,7 +295,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.sceneView.scene.rootNode.childNodes.map({
             $0.removeFromParentNode()
         })
-        self.atomAdded.clear()
+        self.atomAdded.removeAll()
         self.detectedReaction.removeAll()
         self.reactedNodes.removeAll()
     }
@@ -305,12 +312,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: Constants.atomRadius[atomName]!, color: Constants.atomColor[atomName]!, numberOfElectrons: Constants.electronCount[atomName]!, electronOrbitRadius: Constants.electronCourseRadius[atomName]!, position: position) else {
                     return
                 }
-                atomAdded.insert(data: atomName)
-                if let detectReactionResult = ReactionDetector.detectReaction(currentHeap: atomAdded.clone()) {
-                    detectedReaction.append((detectReactionResult.0, detectReactionResult.1))
-                    self.noticeOnlyText("New Reaction! Shake to react")
-                    atomAdded.clear()
+//                atomAdded.insert(data: atomName)
+//                if let detectReactionResult = ReactionDetector.detectReaction(currentHeap: atomAdded.clone()) {
+//                    detectedReaction.append((detectReactionResult.0, detectReactionResult.1))
+//                    self.noticeOnlyText("New Reaction! Shake to react")
+//                    atomAdded.clear()
+//                }
+                if atomAdded[atomName] == nil {
+                    atomAdded[atomName] = 1
+                } else {
+                    atomAdded[atomName]! += 1
                 }
+                print(atomAdded)
+                let dReaction = ReactionDetector.detectReaction(atomAdded)
+                detectedReaction = dReaction
                 self.sceneView.scene.rootNode.addChildNode(wrapperNode)
             }
         } else {
