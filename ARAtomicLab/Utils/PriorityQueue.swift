@@ -3,7 +3,7 @@
 //  ARAtomicLab
 //
 //  Created by Mike He on 2018/3/27.
-//  Copyright © 2018年 Deyuan He. All rights reserved.
+//  Copyright © 2018 Deyuan He. All rights reserved.
 //
 
 class PriorityQueue<T> where T: Comparable {

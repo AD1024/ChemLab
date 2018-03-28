@@ -3,7 +3,7 @@
 //  ChemLab
 //
 //  Created by Mike He on 2018/3/22.
-//  Copyright © 2018年 Deyuan He. All rights reserved.
+//  Copyright © 2018 Deyuan He. All rights reserved.
 //
 
 import UIKit
@@ -72,7 +72,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private let atomColor: [String:UIColor] = ["H": .white, "O": .red, "Cl": .green, "Na": .purple, "C": .black]
     private let electronCount: [String:Int] = ["H": 1, "O": 2, "C": 4, "Cl": 7, "Na": 1]
     private var hasDetectedNoticifation: Bool = false
-    private var detectedReaction: [[String: Int]] = []
+    private var detectedReaction: [([String: Int], String)] = [] // required atom count & product
     private var atomAdded: PriorityQueue = PriorityQueue<String>()
     private var reactedNodes: Set<SCNNode> = []
 
@@ -81,6 +81,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
     // Enable shake detection
     override var canBecomeFirstResponder: Bool {
         get {
@@ -97,33 +98,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
-            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
-//            print(detectedReaction)
+//            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
             for each in detectedReaction {
                 var atomCount = 0
-                for (_, count) in each {
+                for (_, count) in each.0 {
                     atomCount += count
                 }
                 var atomNodes: [String] = []
-                for (atom, count) in each {
+                for (atom, count) in each.0 {
                     for _ in 1...count {
                         atomNodes.append(atom)
                     }
                 }
+                let product = each.1
                 if atomCount == 2 {
-                    let product = ReactionDetector.translateReaction(atomSet: Set(atomNodes))
                     var nodeOne = self.sceneView.scene.rootNode.childNodes.filter({
                         return !self.reactedNodes.contains($0) && $0.name == atomNodes[0]
                     })[0]
                     let potentialNodetwo = self.sceneView.scene.rootNode.childNodes.filter({return $0.name == atomNodes[1] && !self.reactedNodes.contains($0)})
                     var nodeTwo = potentialNodetwo.map({
-                        return (AtomUtil.calcDistance(fi: nodeOne, se: $0), $0)
+                        return (AtomUtils.calcDistance(fi: nodeOne, se: $0), $0)
                     }).sorted(by: {(fi: (Float, SCNNode), se: (Float, SCNNode)) in
                         return fi.0 < se.0
                     })[0].1
                     self.reactedNodes.insert(nodeOne)
                     self.reactedNodes.insert(nodeTwo)
-                    let centerPos: SCNVector3 = AtomUtil.centerOfTwo(fi: nodeOne, se: nodeTwo)
+                    let centerPos: SCNVector3 = AtomUtils.centerOfTwo(fi: nodeOne, se: nodeTwo)
                     if atomRadius[nodeOne.name!]! > atomRadius[nodeTwo.name!]! {
                         swap(&nodeOne, &nodeTwo)
                     }
@@ -135,7 +135,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         .isRemovedOnCompletion(false).build()
                     let moveAnimationForSmallerAtom = CABasicAnimationBuilder
                         .setKeyPath("position")
-                        .setToValue(AtomUtil.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(atomRadius[nodeTwo.name!]!)))
+                        .setToValue(AtomUtils.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(atomRadius[nodeTwo.name!]!)))
                         .setDuration(2.0)
                         .setFillMode(kCAFillModeForwards)
                         .isRemovedOnCompletion(false).build()
@@ -152,11 +152,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     nodeTwo.childNode(withName: "electrons", recursively: true)?.addAnimation(fadeAnimation, forKey: "fading")
                     nodeOne.addAnimation(moveAnimation, forKey: "moving")
                     nodeTwo.addAnimation(moveAnimationForSmallerAtom, forKey: "moving")
-                    let productTextNode = AtomUtil.makeTextNode(msg: product)
+                    let productTextNode = AtomUtils.makeTextNode(msg: product)
                     productTextNode.position = SCNVector3(centerPos.x, centerPos.y - 0.17, centerPos.z)
                     self.sceneView.scene.rootNode.addChildNode(productTextNode)
                 } else {
-                    let product = ReactionDetector.translateReaction(atomSet: Set(atomNodes))
                     let fadeAnimation = CABasicAnimationBuilder
                         .setKeyPath("opacity")
                         .setFillMode(kCAFillModeForwards)
@@ -171,7 +170,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     if centerNodesList.count > 0 {
                         let centerNode = centerNodesList[0]
                         let remaining = Array(atomNodes[1...])
-                        print(remaining)
                         reactedNodes.insert(centerNode)
                         let movingAnimation = CABasicAnimationBuilder
                             .setKeyPath("position")
@@ -193,6 +191,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         }
                         centerNode.addAnimation(fadeAnimation, forKey: "fading")
                         print(remainingNodes.count)
+                        // Considering to add callback to remove these nodes
                         for each in remainingNodes {
                             each.addAnimation(movingAnimation, forKey: "moving")
                             each.addAnimation(fadeAnimation, forKey: "fading")
@@ -286,12 +285,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let transform : matrix_float4x4 = closestResult.worldTransform
                 let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
                 let atomName = self.resultDebugText.text!
-                guard let wrapperNode = AtomUtil.makeAtomWithElectrons(name: atomName, radius: self.atomRadius[atomName]!, color: self.atomColor[atomName]!, numberOfElectrons: self.electronCount[atomName]!, electronOrbitRadius: self.electronCourseRadius[atomName]!, position: position) else {
+                guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: self.atomRadius[atomName]!, color: self.atomColor[atomName]!, numberOfElectrons: self.electronCount[atomName]!, electronOrbitRadius: self.electronCourseRadius[atomName]!, position: position) else {
                     return
                 }
                 atomAdded.insert(data: atomName)
                 if let detectReactionResult = ReactionDetector.detectReaction(currentHeap: atomAdded.clone()) {
-                    detectedReaction.append(detectReactionResult.0)
+                    detectedReaction.append((detectReactionResult.0, detectReactionResult.1))
                     self.noticeOnlyText("New Reaction! Shake to react")
                     atomAdded.clear()
                 }

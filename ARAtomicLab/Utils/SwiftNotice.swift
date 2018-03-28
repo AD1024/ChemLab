@@ -3,7 +3,7 @@
 //  SwiftNotice
 //
 //  Created by JohnLui on 15/4/15.
-//  Copyright (c) 2015年 com.lvwenhan. All rights reserved.
+//  Copyright (c) 2015 com.lvwenhan. All rights reserved.
 //
 
 import Foundation

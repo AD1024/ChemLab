@@ -3,13 +3,13 @@
 //  ARAtomicLab
 //
 //  Created by Mike He on 2018/3/27.
-//  Copyright © 2018年 Deyuan He. All rights reserved.
+//  Copyright © 2018 Deyuan He. All rights reserved.
 //
 
 import UIKit
 import SceneKit
 
-class AtomUtil {
+class AtomUtils {
     static let sqr = {(x: Float) in x * x}
     public static func calcDistance(fi: SCNNode, se: SCNNode) -> Float {
         return sqrt(sqr(fi.position.x - se.position.x) + sqr(fi.position.y - se.position.y) + sqr(fi.position.z - se.position.z))
@@ -100,15 +100,6 @@ class AtomUtil {
         wrapperNode.addChildNode(electronAnimatedWrapper)
         wrapperNode.addChildNode(atomNode)
         wrapperNode.position = position
-        /*
-        let temp_animation = CABasicAnimation(keyPath: "opacity")
-        temp_animation.keyPath = "opacity"
-        temp_animation.toValue = 0.75
-        temp_animation.duration = 1.5
-        temp_animation.isRemovedOnCompletion = false
-        temp_animation.repeatCount = .greatestFiniteMagnitude
-        temp_animation.fillMode = kCAFillModeForwards
-        wrapperNode.childNode(withName: "electrons", recursively: true)?.addAnimation(temp_animation, forKey: "fading") */
         wrapperNode.name = name
         return wrapperNode
     }
