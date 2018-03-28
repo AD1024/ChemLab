@@ -258,6 +258,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        self.sceneView.showsStatistics = false
+        
         self.resultDebugText.text = "Scan QRCode to Begin experiment! :D"
         self.sceneView.autoenablesDefaultLighting = true
         self.viewWidth = sceneView.frame.width

@@ -11,7 +11,7 @@ import Foundation
 class ReactionDetector {
     private static let supportedReactions: [Int:([String:Int], String)] = [4799450059693178067: (["H": 2, "O": 1], "H2O"), 4799450059696380453: (["C": 1, "O": 2], "CO2"), 4799450059696052203:(["H": 1, "Cl": 1], "HCl"), 4799450044604533411: (["Na": 1, "Cl": 1], "NaCl")] //H2O CO2 HCl NaCl
     private static let reactionDict: [(String, [String:Int], Int)] = [
-        ("HCl", ["H": 1, "Cl": 1], 0), ("H2O", ["H": 2, "O": 1], 1), ("CO2", ["C": 1, "O": 2], 2), ("NaCl", ["Na": 1, "Cl": 1], 3), ("H2", ["H": 2], 4), ("O2", ["O": 2], 5)
+        ("HCl", ["H": 1, "Cl": 1], 0), ("H2O", ["H": 2, "O": 1], 1), ("CO2", ["C": 1, "O": 2], 2), ("CO", ["C": 1, "O": 1], 6), ("NaCl", ["Na": 1, "Cl": 1], 3), ("H2", ["H": 2], 4), ("O2", ["O": 2], 5)
     ]
     private static let primaryAtomDict: [Set<String>:String] = [
         ["H", "O"]: "O", ["C", "O"]: "C", ["H"]: "H"
@@ -93,6 +93,8 @@ class ReactionDetector {
                 result += "H2↑"
             case 5:
                 result += "O2↑"
+            case 6:
+                result += "2C + O2 == 2CO(Insufficient O2)"
             default:
                 result += "Unknown Equation"
             }
