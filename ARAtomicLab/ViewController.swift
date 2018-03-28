@@ -67,7 +67,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // Vars
     private var lastResult: String = "..."
     private var hasDetectedNoticifation: Bool = false
-    private var detectedReaction: [([String: Int], String)] = [] // required atom count & product
+    private var detectedReaction: [([String: Int], String, Int)] = [] // required atom count & product
 //    private var atomAdded: PriorityQueue = PriorityQueue<String>()
     private var atomAdded: [String: Int] = [:]
     private var reactedNodes: Set<SCNNode> = []
@@ -94,6 +94,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         print("Begin reaction: \(atomAdded)")
+        var equationSet: Set<Int> = []
         if motion == .motionShake {
 //            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
             for each in detectedReaction {
@@ -103,6 +104,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     atomCount += count
                     atomAdded[atom]! -= count
                 }
+                equationSet.insert(each.2)
                 var atomNodes: [String] = []
                 for (atom, count) in each.0 {
                     for _ in 1...count {
@@ -226,6 +228,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
         print("End reaction: \(atomAdded)")
         detectedReaction.removeAll()
+        let reactionResult = ReactionDetector.translateToEquation(equationSet)
+        self.resultDebugText.text = reactionResult
     }
     
     override func viewDidLoad() {
@@ -238,6 +242,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         view.addGestureRecognizer(longPressRecognizer)
         // Set the view's delegate
         sceneView.delegate = self
+        resultDebugText.numberOfLines = 5
+        resultDebugText.lineBreakMode = .byWordWrapping
+        let size: CGSize = resultDebugText.sizeThatFits(CGSize(width: resultDebugText.frame.size.width, height: CGFloat(MAXFLOAT)))
+        
+        resultDebugText.frame = CGRect(x: resultDebugText.frame.origin.x, y: resultDebugText.frame.origin.y, width: resultDebugText.frame.size.width, height: size.height);
+        
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
@@ -248,8 +258,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        let rect = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 120)
-        self.resultDebugText.text = "Indentified Text"
+        self.resultDebugText.text = "Scan QRCode to Begin experiment! :D"
         self.sceneView.autoenablesDefaultLighting = true
         self.viewWidth = sceneView.frame.width
         self.viewHeight = sceneView.frame.height
@@ -305,10 +314,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let HitTestResults : [ARHitTestResult] = sceneView.hitTest(gestureRecognizer.location(in: gestureRecognizer.view), types: ARHitTestResult.ResultType.featurePoint)
         
         if let closestResult = HitTestResults.first {
-            if Constants.atomList.contains(self.resultDebugText.text!) {
+            if Constants.atomList.contains(self.lastResult) {
                 let transform : matrix_float4x4 = closestResult.worldTransform
                 let position : SCNVector3 = SCNVector3Make(transform.columns.3.x, transform.columns.3.y, transform.columns.3.z)
-                let atomName = self.resultDebugText.text!
+                let atomName = self.lastResult
                 guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: Constants.atomRadius[atomName]!, color: Constants.atomColor[atomName]!, numberOfElectrons: Constants.electronCount[atomName]!, electronOrbitRadius: Constants.electronCourseRadius[atomName]!, position: position) else {
                     return
                 }

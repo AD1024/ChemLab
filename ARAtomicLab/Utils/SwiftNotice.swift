@@ -59,8 +59,8 @@ extension UIResponder {
         return SwiftNotice.wait()
     }
     @discardableResult
-    func noticeOnlyText(_ text: String) -> UIWindow{
-        return SwiftNotice.showText(text)
+    func noticeOnlyText(_ text: String, _ clearTime: Int=2) -> UIWindow{
+        return SwiftNotice.showText(text, autoClear: true, autoClearTime: clearTime)
     }
     func clearAllNotice() {
         SwiftNotice.clear()

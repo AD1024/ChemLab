@@ -25,7 +25,7 @@
                                 <rect key="frame" x="196" y="357" width="22" height="22"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Result" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tjO-Z8-Cqy">
-                                <rect key="frame" x="20" y="0.0" width="374" height="64"/>
+                                <rect key="frame" x="20" y="0.0" width="374" height="105"/>
                                 <color key="backgroundColor" red="0.56191305051813467" green="0.56191305051813467" blue="0.56191305051813467" alpha="0.70741637323943662" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
