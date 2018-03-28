@@ -5,6 +5,7 @@
 //  Created by Mike He on 2018/3/27.
 //  Copyright © 2018 Deyuan He. All rights reserved.
 //
+//  Depreacted class; the first reaction detecting algorithm uses this datastructure to maintain added atoms
 
 class PriorityQueue<T> where T: Comparable {
     private var content: [T] = []

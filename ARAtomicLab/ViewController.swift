@@ -21,6 +21,11 @@ extension UIImage {
         }
     }
     
+    ///  Rotate the image
+    ///
+    ///  - parameter radian: the angle(in rad) to rotate
+    ///
+    ///  - returns: The rotated image(type UIImages)
     func image(withRotation radians: CGFloat) -> UIImage {
         let cgImage = self.cgImage!
         let LARGEST_SIZE = CGFloat(max(self.size.width, self.size.height))
@@ -52,39 +57,38 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     private var visionRequests = [VNRequest]()
     private let dispatchQueue = DispatchQueue(label: "com.mikehe.requeue")
     
-    @IBOutlet weak var startReaction: UIButton!
+    @IBOutlet weak var startReaction: UIButton!                        // Unused button
     
-    @IBOutlet weak var resultDebugText: UILabel!
+    @IBOutlet weak var resultDebugText: UILabel!                       // the result of QR identification & reaction equation
     
     // Scene
-    private var result: String = "..."
-    private var confidence: Float = -0.01
-    private let resultTextViewDepth: Float = 0.05
-    private var infoCardShowed: Bool = false
-    private var viewHeight: CGFloat = 1024.0
-    private var viewWidth: CGFloat = 768.0
+    private let resultTextViewDepth: Float = 0.05                      // the depth of label on atom models
     
     // Vars
-    private var lastResult: String = "..."
-    private var hasDetectedNoticifation: Bool = false
-    private var detectedReaction: [([String: Int], String, Int)] = [] // required atom count & product
-//    private var atomAdded: PriorityQueue = PriorityQueue<String>()
-    private var atomAdded: [String: Int] = [:]
-    private var reactedNodes: Set<SCNNode> = []
+    private var lastResult: String = "..."                             // the most recent QR identification result
+    private var detectedReaction: [([String: Int], String, Int)] = []  // required atom count & product
+//    private var atomAdded: PriorityQueue = PriorityQueue<String>()   // deprecated reaction detection algorithm
+    private var atomAdded: [String: Int] = [:]                         // added atom(name:count) @note: remove all of these after performing a reaction
+    private var reactedNodes: Set<SCNNode> = []                        // atoms that has performed reaction
 
-    @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet var sceneView: ARSCNView!                                // AR sceneView
     
-    override var prefersStatusBarHidden: Bool {
+    override var prefersStatusBarHidden: Bool {                        // Hide status bar
         return true
     }
     
     // Enable shake detection
-    override var canBecomeFirstResponder: Bool {
+    override var canBecomeFirstResponder: Bool {                       // register for shaking detection
         get {
             return true
         }
     }
     
+    ///  Get the atom list that contains atoms with {name} that did not reacted yet
+    ///
+    ///  - parameter name: the name of target atoms
+    ///
+    ///  - returns: the list of qualified atoms
     func getUnreactedNodeByName(_ name: String) -> [SCNNode] {
         let nodes = self.sceneView.scene.rootNode.childNodes.filter({
             return !self.reactedNodes.contains($0) && $0.name == name
@@ -92,19 +96,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return nodes
     }
     
+    ///  Handle reaction
+    ///
+    ///  - parameter ***
+    ///  - parameter ***
+    ///
+    ///  - returns: nil
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
-        print("Begin reaction: \(atomAdded)")
         var equationSet: Set<Int> = []
         if motion == .motionShake {
-//            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
-            for each in detectedReaction {
-                var atomCount = 0
-                print("\(each) reaction")
-                for (atom, count) in each.0 {
+            for each in detectedReaction {     // handle all reactions that has been detected
+                var atomCount = 0              // count the atom that will be consumed
+                for (atom, count) in each.0 {  // each: ([String:Int], String, Int) the requirement of the reaction, the product, the id of the reaction(used to retreat the equation)
                     atomCount += count
-                    atomAdded[atom]! -= count
+                    atomAdded[atom]! -= count  // cost {count} atoms with name {atom}
                 }
-                equationSet.insert(each.2)
+                equationSet.insert(each.2)     // use Set<String> to prevent duplicated equations
                 var atomNodes: [String] = []
                 for (atom, count) in each.0 {
                     for _ in 1...count {
@@ -112,22 +119,23 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     }
                 }
                 let product = each.1
-                if atomCount == 2 {
+                if atomCount == 2 {   // If there are only two atoms, move those two together
                     var nodeOne = self.sceneView.scene.rootNode.childNodes.filter({
                         return !self.reactedNodes.contains($0) && $0.name == atomNodes[0]
                     })[0]
-                    self.reactedNodes.insert(nodeOne)
+                    self.reactedNodes.insert(nodeOne)  // @note: add it into reacted set immidiately !!!
                     let potentialNodetwo = self.sceneView.scene.rootNode.childNodes.filter({return $0.name == atomNodes[1] && !self.reactedNodes.contains($0)})
                     var nodeTwo = potentialNodetwo.map({
                         return (AtomUtils.calcDistance(fi: nodeOne, se: $0), $0)
                     }).sorted(by: {(fi: (Float, SCNNode), se: (Float, SCNNode)) in
-                        return fi.0 < se.0
+                        return fi.0 < se.0             // react with the nearest atom
                     })[0].1
                     self.reactedNodes.insert(nodeTwo)
                     let centerPos: SCNVector3 = AtomUtils.centerOfTwo(fi: nodeOne, se: nodeTwo)
                     if Constants.atomRadius[nodeOne.name!]! > Constants.atomRadius[nodeTwo.name!]! {
                         swap(&nodeOne, &nodeTwo)
                     }
+                    // set up animations
                     let moveAnimation = CABasicAnimationBuilder
                         .setKeyPath("position")
                         .setToValue(centerPos)
@@ -136,7 +144,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         .isRemovedOnCompletion(false).build()
                     let moveAnimationForSmallerAtom = CABasicAnimationBuilder
                         .setKeyPath("position")
-                        .setToValue(AtomUtils.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, smallerAtomRadius: Float(Constants.atomRadius[nodeTwo.name!]!)))
+                        .setToValue(AtomUtils.paddingPointForSmallerAtom(centerPos: centerPos, smallerAtomPosition: nodeOne.position, largerAtomRadius: Float(Constants.atomRadius[nodeTwo.name!]!)))
                         .setDuration(2.0)
                         .setFillMode(kCAFillModeForwards)
                         .isRemovedOnCompletion(false).build()
@@ -157,6 +165,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     productTextNode.position = SCNVector3(centerPos.x, centerPos.y - 0.17, centerPos.z)
                     self.sceneView.scene.rootNode.addChildNode(productTextNode)
                 } else {
+                    // fade all the nodes and then create a new model at the position of {primary node}
                     let fadeAnimation = CABasicAnimationBuilder
                         .setKeyPath("opacity")
                         .setFillMode(kCAFillModeForwards)
@@ -178,7 +187,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     guard let centerNodeName = ReactionDetector.getReactionPrimaryAtom(reactant: Set(atomNodes)) else {
                         print("Unknown reaction! No primary found")
                         return
-                    }
+                    }   // the position that other secondary atoms fly to
                     let centerNodesList = getUnreactedNodeByName(centerNodeName)
                     if centerNodesList.count > 0 {
                         let centerNode = centerNodesList[0]
@@ -194,13 +203,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                             .build()
                         var remainingNodes: [SCNNode] = []
                         for each in remaining {
+                            // find out the remaining nodes
                             let potentialNodes = getUnreactedNodeByName(each)
                             if potentialNodes.count > 0 {
                                 let node = potentialNodes[0]
                                 reactedNodes.insert(node)
                                 remainingNodes.append(node)
                             } else {
-                                print("Error while reacting: Insufficient remaining atom")
+                                print("Error while reacting: Insufficient remaining atom") // preventing exhaustion
                                 return
                             }
                         }
@@ -249,8 +259,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         resultDebugText.frame = CGRect(x: resultDebugText.frame.origin.x, y: resultDebugText.frame.origin.y, width: resultDebugText.frame.size.width, height: size.height);
         
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        // hide statistics such as fps and timing information
+        sceneView.showsStatistics = false
         
         // Create a new scene
         let scene = SCNScene()
@@ -258,12 +268,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        self.sceneView.showsStatistics = false
-        
+        // Initialize scene and text
         self.resultDebugText.text = "Scan QRCode to Begin experiment! :D"
         self.sceneView.autoenablesDefaultLighting = true
-        self.viewWidth = sceneView.frame.width
-        self.viewHeight = sceneView.frame.height
         self.loopQRCodeIdentification()
     }
     
@@ -292,16 +299,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Release any cached data, images, etc that aren't in use.
     }
     
-    func getAtomScene(name: String) -> SCNScene? {
-        if Constants.atomList.contains(name) {
-            let scene = SCNScene(named: "art.scnassets/\(name).scn")
-            return scene
-        } else {
-            print("\(name) is not a valid atom")
-            return nil
-        }
-    }
-    
+    /// - Long click to remove everything
     @objc func clearScene(gestureRecognizer: UIGestureRecognizer) {
         self.sceneView.scene.rootNode.childNodes.map({
             $0.removeFromParentNode()
@@ -311,7 +309,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.reactedNodes.removeAll()
     }
     
-    
+    /// - tap the scene and create an atom at the position of the tapping point
     @objc func createAtomByTapping(gestureRecognizer: UIGestureRecognizer) {
         let HitTestResults : [ARHitTestResult] = sceneView.hitTest(gestureRecognizer.location(in: gestureRecognizer.view), types: ARHitTestResult.ResultType.featurePoint)
         
@@ -323,18 +321,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 guard let wrapperNode = AtomUtils.makeAtomWithElectrons(name: atomName, radius: Constants.atomRadius[atomName]!, color: Constants.atomColor[atomName]!, numberOfElectrons: Constants.electronCount[atomName]!, electronOrbitRadius: Constants.electronCourseRadius[atomName]!, position: position) else {
                     return
                 }
-//                atomAdded.insert(data: atomName)
-//                if let detectReactionResult = ReactionDetector.detectReaction(currentHeap: atomAdded.clone()) {
-//                    detectedReaction.append((detectReactionResult.0, detectReactionResult.1))
-//                    self.noticeOnlyText("New Reaction! Shake to react")
-//                    atomAdded.clear()
-//                }
+                
+                // update atom counter
                 if atomAdded[atomName] == nil {
                     atomAdded[atomName] = 1
                 } else {
                     atomAdded[atomName]! += 1
                 }
-                print(atomAdded)
+                
+                // detect potential reactions
                 let dReaction = ReactionDetector.detectReaction(atomAdded)
                 detectedReaction = dReaction
                 self.sceneView.scene.rootNode.addChildNode(wrapperNode)
@@ -345,6 +340,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    /// - a loop task to identify QR code
     func loopQRCodeIdentification() {
         dispatchQueue.asyncAfter(deadline: DispatchTime.now() + TimeInterval(1.5), execute: {
             self.performQRCodeIdentificatation()
@@ -353,6 +349,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func performQRCodeIdentificatation() {
+        // get pixel from current frame in AR scene
         let pixel: CVPixelBuffer? = sceneView.session.currentFrame?.capturedImage
         if pixel == nil {
             print("No pixel got")
@@ -365,7 +362,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             print("Invalid Image")
             return
         }
-        var ocrImage = UIImage(cgImage: cgImage!).image(withRotation: CGFloat(-0.5 * .pi))
+        
+        // Rotate the image (it is actually unnecessary, but I used OCR previously so this will remain here)
+        let ocrImage = UIImage(cgImage: cgImage!).image(withRotation: CGFloat(-0.5 * .pi))
         if ocrImage.size.height > 0 && ocrImage.size.width > 0 {
             let barcodeRequest = VNDetectBarcodesRequest(completionHandler: {request, error in
                 guard let resultSet = request.results else { return }

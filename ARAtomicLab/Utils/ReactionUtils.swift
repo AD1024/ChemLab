@@ -100,6 +100,6 @@ class ReactionDetector {
             }
             result += "\n"
         }
-        return result
+        return result + "Long click to clean the scene"
     }
 }
