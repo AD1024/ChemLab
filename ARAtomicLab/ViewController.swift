@@ -88,19 +88,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    func getUnreactedNodeByName(_ name: String) -> [SCNNode] {
+        let nodes = self.sceneView.scene.rootNode.childNodes.filter({
+            return !self.reactedNodes.contains($0) && $0.name == name
+        })
+        return nodes
+    }
+    
     override func motionEnded(_ motion: UIEventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
-//            self.noticeInfo("Shaking!!", autoClear: true, autoClearTime: 2)
+            self.noticeInfo("Reacting!!", autoClear: true, autoClearTime: 2)
+//            print(detectedReaction)
             for each in detectedReaction {
                 var atomCount = 0
                 for (_, count) in each {
                     atomCount += count
                 }
-                if atomCount == 2 {
-                    var atomNodes: [String] = []
-                    for (atom, _) in each {
+                var atomNodes: [String] = []
+                for (atom, count) in each {
+                    for _ in 1...count {
                         atomNodes.append(atom)
                     }
+                }
+                if atomCount == 2 {
                     let product = ReactionDetector.translateReaction(atomSet: Set(atomNodes))
                     var nodeOne = self.sceneView.scene.rootNode.childNodes.filter({
                         return !self.reactedNodes.contains($0) && $0.name == atomNodes[0]
@@ -146,6 +156,48 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     productTextNode.position = SCNVector3(centerPos.x, centerPos.y - 0.17, centerPos.z)
                     self.sceneView.scene.rootNode.addChildNode(productTextNode)
                 } else {
+                    let product = ReactionDetector.translateReaction(atomSet: Set(atomNodes))
+                    let fadeAnimation = CABasicAnimationBuilder
+                        .setKeyPath("opacity")
+                        .setFillMode(kCAFillModeForwards)
+                        .setDuration(1.5)
+                        .isRemovedOnCompletion(false)
+                        .setToValue(0.0)
+                        .build()
+                    atomNodes = atomNodes.sorted(by: {(x: String, y: String) in
+                        return self.atomRadius[x]! > self.atomRadius[y]!
+                    })
+                    let centerNodesList = getUnreactedNodeByName(atomNodes[0])
+                    if centerNodesList.count > 0 {
+                        let centerNode = centerNodesList[0]
+                        let remaining = Array(atomNodes[1...])
+                        print(remaining)
+                        reactedNodes.insert(centerNode)
+                        let movingAnimation = CABasicAnimationBuilder
+                            .setKeyPath("position")
+                            .setToValue(centerNode.position)
+                            .setFillMode(kCAFillModeForwards)
+                            .isRemovedOnCompletion(false)
+                            .setDuration(2.0)
+                            .build()
+                        var remainingNodes: [SCNNode] = []
+                        for each in remaining {
+                            let potentialNodes = getUnreactedNodeByName(each)
+                            if potentialNodes.count > 0 {
+                                let node = potentialNodes[0]
+                                reactedNodes.insert(node)
+                                remainingNodes.append(node)
+                            } else {
+                                print("Error while reacting: Insufficient remaining atom")
+                            }
+                        }
+                        centerNode.addAnimation(fadeAnimation, forKey: "fading")
+                        print(remainingNodes.count)
+                        for each in remainingNodes {
+                            each.addAnimation(movingAnimation, forKey: "moving")
+                            each.addAnimation(fadeAnimation, forKey: "fading")
+                        }
+                    }
                     
                 }
             }
