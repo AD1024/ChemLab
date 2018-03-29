@@ -16,6 +16,12 @@ class ReactionDetector {
     private static let primaryAtomDict: [Set<String>:String] = [
         ["H", "O"]: "O", ["C", "O"]: "C", ["H"]: "H"
     ]
+    
+    ///  @deprecated calculate the hash of current atom combination
+    ///
+    ///  - parameter currentHeap: the PriorityQueue that stores atom names
+    ///
+    ///  - returns: the hash of current combination
     private static func hashReaction(_ currentHeap: PriorityQueue<String>) -> Int {
         var ans = ""
         while currentHeap.size() > 0 {
@@ -25,6 +31,7 @@ class ReactionDetector {
         return ans.hashValue
     }
     
+    /// @deprecated
     public static func detectReaction(currentHeap: PriorityQueue<String>) -> ([String: Int], String)? {
         if let reaction = supportedReactions[self.hashReaction(currentHeap)] {
             return reaction
@@ -32,13 +39,11 @@ class ReactionDetector {
         return nil
     }
     
-    private static func validForReaction(atomName: String, remainingCount: Int, reaction: [String:Int]) -> Bool {
-        if reaction[atomName] != nil {
-            return remainingCount >= reaction[atomName]!
-        }
-        return false
-    }
-    
+    ///  pick out valid reactions
+    ///
+    ///  - parameter atomAdded: dictionary that stores the atoms and corresponding count
+    ///
+    ///  - returns: the list of reactions that can be done
     public static func detectReaction(_ atomAdded: [String:Int]) -> [([String: Int], String, Int)] {
         var detectedReaction: [([String:Int], String, Int)] = []
         var copyOfAtomAdded: [String:Int] = [:]
@@ -73,10 +78,20 @@ class ReactionDetector {
         return detectedReaction
     }
     
+    ///  Get the primary atom in a reaction
+    ///
+    ///  - parameter reactant: the set of strings of the reactant
+    ///
+    ///  - returns: the name of primary atom in the reaction reaction
     public static func getReactionPrimaryAtom(reactant: Set<String>) -> String? {
         return primaryAtomDict[reactant]
     }
     
+    ///  Transtlate the reaction equation
+    ///
+    ///  - parameter equationIdSet: the set of reaction id
+    ///
+    ///  - returns: the result text
     public static func translateToEquation(_ equationIdSet: Set<Int>) -> String {
         var result = "Reaction Equation(s):\n"
         for each in equationIdSet {
